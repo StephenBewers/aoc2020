@@ -50,7 +50,24 @@ const getSeatIdArray = (array) => {
   return seatIdArray;
 };
 
+// Gets the highest seat ID in the list - Solution to Part 1
 const getMaxSeatId = (array) => {
   const seatIdArray = getSeatIdArray(array);
   return Math.max.apply(Math, seatIdArray);
+};
+
+// Gets my seat ID - Solution to Part 2
+const getMySeatId = (array) => {
+  const seatIdArray = getSeatIdArray(array);
+  const sortedSeatIdArray = seatIdArray.sort((a, b) => a - b);
+  const minSeatId = sortedSeatIdArray[0];
+  let i = 0;
+  let currentSeatId = minSeatId;
+  while (i < sortedSeatIdArray.length + 1) {
+    if (sortedSeatIdArray[i] !== currentSeatId) {
+      return currentSeatId;
+    }
+    i++;
+    currentSeatId++;
+  }
 };
