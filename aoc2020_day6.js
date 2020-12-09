@@ -7,38 +7,76 @@ fetch(inputFile)
     array = data.split("\n");
   });
 
-// Parses the input file into an array of arrays - each array containing the unique questions for that group
-const parseInput = (array) => {
+// Gets the sum of questions anyone answered yes to for all groups - Solution to Part 1
+const getSumOfQuestionsForAnyone = (array) => {
   let allGroupsArray = [];
   let singleGroupArray = [];
   for (item of array) {
     if (item.trim().length > 0) {
       singleGroupArray.push(item);
     } else {
-      let groupCharArray = [];
-      for (item of singleGroupArray) {
-        let charArray = [...item];
-        for (item of charArray) {
-          if (item.trim().length > 0) {
-            groupCharArray.push(item);
+      let groupQuestionArray = [];
+      for (person of singleGroupArray) {
+        let personQuestionArray = [...person];
+        for (question of personQuestionArray) {
+          if (question.trim().length > 0) {
+            groupQuestionArray.push(question);
           }
         }
       }
-      let groupUniqueCharArray = [...new Set(groupCharArray)];
-      allGroupsArray.push(groupUniqueCharArray);
+      let groupUniqueQuestionSet = [...new Set(groupQuestionArray)];
+      allGroupsArray.push(groupUniqueQuestionSet);
       singleGroupArray = [];
     }
   }
-  return allGroupsArray;
+  return getSumOfQuestions(allGroupsArray);
 };
 
-// Gets the sum of questions for all groups - Solution to Part 1
+// Gets the sum of questions everyone answered yes to for all groups - Solution to Part 2
+const getSumOfQuestionsForEveryone = (array) => {
+  let allGroupsArray = [];
+  let singleGroupArray = [];
+  let groupSize = 0;
+  for (item of array) {
+    if (item.trim().length > 0) {
+      singleGroupArray.push(item);
+      groupSize++;
+    } else {
+      let groupQuestionArray = [];
+      for (person of singleGroupArray) {
+        let personQuestionArray = [...person];
+        for (question of personQuestionArray) {
+          if (question.trim().length > 0) {
+            groupQuestionArray.push(question);
+          }
+        }
+      }
+      let wholeGroupQuestionsArray = [];
+      for (question of groupQuestionArray) {
+        if (
+          countOccurrences(groupQuestionArray, question) === groupSize &&
+          !wholeGroupQuestionsArray.includes(question)
+        ) {
+          wholeGroupQuestionsArray.push(question);
+        }
+      }
+      allGroupsArray.push(wholeGroupQuestionsArray);
+      singleGroupArray = [];
+      groupSize = 0;
+    }
+  }
+  return getSumOfQuestions(allGroupsArray);
+};
+
+// Gets the sum of questions within an array
 const getSumOfQuestions = (array) => {
-  const parsedInputArray = parseInput(array);
   let sumOfQuestions = 0;
-  debugger;
-  for (item of parsedInputArray) {
+  for (item of array) {
     sumOfQuestions = sumOfQuestions + item.length;
   }
   return sumOfQuestions;
 };
+
+// Counts the occurrences of an item within an array
+const countOccurrences = (array, value) =>
+  array.reduce((a, v) => (v === value ? a + 1 : a), 0);
